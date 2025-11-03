@@ -15,7 +15,7 @@ app.use('/output', express.static('output'));
 
 app.post('/api/upload', cardController.uploadAndGenerate);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
   console.log(`📂 Acesse a aplicação no navegador`);
 });
