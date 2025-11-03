@@ -27,7 +27,7 @@ O sistema utiliza libs de Node.js para criar cartões com design visual e inform
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/iuupi-lotes-js.git
+git clone https://github.com/xbarcos/iuupi-lotes-js.git
 cd iuupi-lotes-js
 ```
 
