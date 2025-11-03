@@ -1,0 +1,11 @@
+```
+node_modules/
+uploads/*
+!uploads/.gitkeep
+temp/*
+!temp/.gitkeep
+output/*
+!output/.gitkeep
+.env
+.DS_Store
+```

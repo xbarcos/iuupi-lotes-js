@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Carteirinhas Estudantis</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo-header">
+        <img src="/images/logo.svg" alt="Logo" class="logo-img">
+      </div>
+      <h1>Gerador de Carteirinhas Estudantis</h1>
+      <p class="subtitle">Sistema automatizado para geração de carteirinhas em PDF</p>
+    </header>
+
+    <main class="main-content">
+      <section class="upload-section" id="uploadSection">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div class="upload-area" id="uploadArea">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <h3>Faça upload da planilha Excel</h3>
+            <p>Arraste e solte o arquivo aqui ou clique para selecionar</p>
+            <span class="file-format">Formatos aceitos: .xlsx, .xls</span>
+            <input type="file" name="excel" id="fileInput" accept=".xlsx,.xls" required>
+          </div>
+          
+          <div class="file-info" id="fileInfo"></div>
+          
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <span class="btn-text">Gerar Carteirinhas</span>
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <section class="progress-section" id="progressSection">
+        <div class="progress-content">
+          <div class="progress-icon">
+            <div class="spinner"></div>
+          </div>
+          <h3>Gerando carteirinhas...</h3>
+          <p class="progress-text">Por favor, aguarde enquanto processamos sua planilha</p>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <p class="progress-percentage" id="progressPercentage">0%</p>
+        </div>
+      </section>
+
+      <section class="success-section" id="successSection">
+        <div class="success-content">
+          <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3>Carteirinhas geradas com sucesso!</h3>
+          <p class="success-text" id="successText">Foram geradas <strong id="totalCards">0</strong> carteirinhas</p>
+          
+          <div class="action-buttons">
+            <a href="#" class="btn btn-download" id="downloadBtn" download>
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="btn-text">Baixar PDF</span>
+            </a>
+            <button class="btn btn-secondary" id="newGenerationBtn">
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span class="btn-text">Nova Geração</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="error-section" id="errorSection">
+        <div class="error-content">
+          <div class="error-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3>Ops! Algo deu errado</h3>
+          <p class="error-text" id="errorText">Ocorreu um erro ao processar sua solicitação</p>
+          <button class="btn btn-secondary" id="retryBtn">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span class="btn-text">Tentar Novamente</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 IUUPI. Todos os direitos reservados.</p>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
