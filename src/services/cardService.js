@@ -1,3 +1,5 @@
+// src/services/cardService.js
+
 const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
@@ -20,60 +22,69 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 
 function formatarNomeUsuario(nomeCompleto) {
   if (!nomeCompleto) return 'Usuário';
-
+  
   let nomeLimpo = nomeCompleto.replace(/[0-9#]+/g, '').trim();
   nomeLimpo = nomeLimpo
     .split(/\s+/)
     .map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
     .join(' ');
-
+  
   const partes = nomeLimpo.split(' ');
   if (partes.length === 1) return partes[0];
-
+  
   const primeiro = partes[0];
   const ultimo = partes[partes.length - 1];
   const meios = partes.slice(1, -1).map(p => p[0].toUpperCase() + '.');
-
+  
   return [primeiro, ...meios, ultimo].join(' ');
 }
-
 
 async function createStudentCard(userData) {
   const canvas = createCanvas(CONFIG.cardWidth, CONFIG.cardHeight);
   const ctx = canvas.getContext('2d');
+
+  console.log('Gerando carteirinha:', userData.usuario);
+
+  // Fundo gradiente com cantos arredondados
   const gradiente = ctx.createLinearGradient(0, 0, 0, CONFIG.cardHeight);
   gradiente.addColorStop(0, 'rgb(36, 78, 122)');
   gradiente.addColorStop(1, 'rgb(16, 36, 66)');
-
   drawRoundedRect(ctx, 0, 0, CONFIG.cardWidth, CONFIG.cardHeight, 20);
   ctx.fillStyle = gradiente;
   ctx.fill();
+
+  // Marca d'água "IUUPI" - usar fontes com fallback
   ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-  ctx.font = 'bold 140px Arial';
+  ctx.font = 'bold 140px "Liberation Sans", "DejaVu Sans", Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('IUUPI', CONFIG.cardWidth / 2, CONFIG.cardHeight / 2);
 
+  // Logo
   try {
     if (fs.existsSync(CONFIG.logoPath)) {
       const logo = await loadImage(CONFIG.logoPath);
       ctx.drawImage(logo, 25, 20, 45, 45);
+      console.log('✓ Logo carregada');
     }
   } catch (error) {
-    throw error.message;
+    console.warn('⚠ Logo não disponível');
   }
 
+  // QR Code
   try {
     const qrCode = await generateQRCode(userData.codigo);
     const qrImage = await loadImage(qrCode);
-
+    
     ctx.fillStyle = 'rgb(255, 255, 255)';
     ctx.fillRect(CONFIG.cardWidth - 95, 15, 80, 80);
     ctx.drawImage(qrImage, CONFIG.cardWidth - 90, 20, 70, 70);
+    console.log('✓ QR Code gerado');
   } catch (error) {
     console.error('✗ Erro no QR Code:', error.message);
   }
 
+  // Textos com fontes específicas e fallback
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -82,12 +93,17 @@ async function createStudentCard(userData) {
   const nomeCompleto = `${nomeFormatado} #${userData.codigo}`;
   const titular = userData.cliente || 'Estabelecimento';
 
-  ctx.font = 'bold 22px Arial';
+  // Nome principal - usar fontes com fallback extensivo
+  ctx.font = 'bold 22px "Liberation Sans", "DejaVu Sans", "Noto Sans", Arial, Helvetica, sans-serif';
   ctx.fillText(nomeCompleto, 25, CONFIG.cardHeight - 45);
+  console.log('✓ Nome:', nomeCompleto);
 
+  // Titular
   ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-  ctx.font = '15px Arial';
+  ctx.font = '15px "Liberation Sans", "DejaVu Sans", "Noto Sans", Arial, Helvetica, sans-serif';
   ctx.fillText(titular, 25, CONFIG.cardHeight - 20);
+  console.log('✓ Titular:', titular);
+
   return canvas;
 }
 
@@ -96,6 +112,10 @@ async function saveCardImage(canvas, codigo) {
     const filePath = path.join(CONFIG.tempDir, `card_${codigo}_${Date.now()}.png`);
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(filePath, buffer);
+    
+    const stats = fs.statSync(filePath);
+    console.log(`✓ Salvo: ${stats.size} bytes`);
+    
     return filePath;
   } catch (error) {
     console.error('✗ Erro ao salvar:', error);
